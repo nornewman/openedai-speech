@@ -389,8 +389,11 @@ async def generate_speech(request: GenerateSpeechRequest):
 
         def cleanup():
             ffmpeg_proc.kill()
-            del generator_worker
-            del out_writer_worker
+            # Check if variables exist in local scope before deleting them
+            if 'generator_worker' in locals():
+                del generator_worker
+            if 'out_writer_worker' in locals():
+                del out_writer_worker
 
         return StreamingResponse(content=ffmpeg_proc.stdout, media_type=media_type, background=cleanup)
     else:
